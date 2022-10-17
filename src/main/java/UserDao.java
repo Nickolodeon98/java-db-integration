@@ -1,11 +1,9 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
     public void add() throws SQLException, ClassNotFoundException {
+        /* DB 연결 과정 (mysql 켜는 과정)*/
         Map<String, String> env = System.getenv(); // 환경변수를 사용하여
         String dbHost = env.get("DB_HOST");
         String dbUser = env.get("DB_USER");
@@ -13,14 +11,16 @@ public class UserDao {
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);
-        // sql 연결을 위한 준비
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES(?, ?, ?)");
-        ps.setString(1, "2");
-        ps.setString(2, "Juhwan");
-        ps.setString(3, "5678");
 
-        int status = ps.executeUpdate(); // ctrl + enter
-        System.out.println(status);
+        /*DB에 쿼리 입력 후 바인딩*/
+        PreparedStatement ps = conn.prepareStatement("SELECT password FROM users WHERE id = ?");
+        ps.setString(1, "2");
+
+        /*쿼리 실행*/
+        ResultSet resultSet = ps.executeQuery(); // ctrl + enter
+        resultSet.next();
+        System.out.println(resultSet.getString(1));
+
         ps.close(); // 서버 어플리케이션인 경우에는 반드시 작성 필요
         conn.close();
     }
