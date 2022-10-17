@@ -28,7 +28,7 @@ public class UserDao {
         conn.close();
     }
 
-    public User get(String id) throws SQLException, ClassNotFoundException {
+    public User select(String id) throws SQLException, ClassNotFoundException {
         Map<String, String> env = System.getenv(); // 환경변수를 사용하여
         String dbHost = env.get("DB_HOST");
         String dbUser = env.get("DB_USER");
@@ -56,7 +56,7 @@ public class UserDao {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         UserDao userDao = new UserDao();
 //        userDao.add();
-        User testUser = userDao.get("2");
+        User testUser = userDao.select("2");
         System.out.println(testUser.getName());
     }
 }
