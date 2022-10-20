@@ -1,9 +1,11 @@
 import domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -18,10 +20,16 @@ class UserDaoTest {
     @Autowired
     ApplicationContext context;
 
+    UserDao userDao;
+
+    @BeforeEach
+    void setup() {
+        userDao = context.getBean("awsUserDao", UserDao.class); // 가져올 빈의 이름과 빈이 리턴하는 클래스를 매개변수로 넣어준다.
+    }
+
     @DisplayName("Add and Select")
     @Test
     void awsUserDaoAddAndSelect() throws SQLException, ClassNotFoundException {
-        UserDao userDao = context.getBean("awsUserDao", UserDao.class); // 가져올 빈의 이름과 빈이 리턴하는 클래스를 매개변수로 넣어준다.
         userDao.deleteAll();
         User user = new User("1", "Seunghwan", "1034");
         userDao.add(user);
@@ -33,11 +41,10 @@ class UserDaoTest {
     @DisplayName("Delete")
     @Test
     void awsUserDaoDelete() throws SQLException, ClassNotFoundException {
-        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
         userDao.deleteAll();
 
         assertEquals(0, userDao.getCount());
-        assertThrows(SQLException.class, () -> {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
             userDao.select("1");
         });
     }
@@ -45,7 +52,6 @@ class UserDaoTest {
     @DisplayName("count")
     @Test
     void awsUserDaoGetCount() throws SQLException, ClassNotFoundException {
-        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
         userDao.deleteAll();
 
         User user1 = new User("1", "Minsoo", "1230");
@@ -61,4 +67,12 @@ class UserDaoTest {
 
     }
 
+    @DisplayName("get exception handling")
+    @Test
+    void getById() throws SQLException, ClassNotFoundException {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            userDao.select("4");
+        });
+
+    }
 }

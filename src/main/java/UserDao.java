@@ -1,4 +1,5 @@
 import domain.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.*;
 import java.util.Map;
@@ -33,12 +34,16 @@ public class UserDao {
 
         /*쿼리 실행*/
         ResultSet resultSet = ps.executeQuery(); // ctrl + enter
-        resultSet.next();
+        User user = null;
+        if (resultSet.next()) {
+            user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+        }
 
-        User user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
-
+        resultSet.close();
         ps.close(); // 서버 어플리케이션인 경우에는 반드시 작성 필요
         conn.close();
+
+        if (user == null) throw new EmptyResultDataAccessException(1);
 
         return user;
     }
