@@ -18,15 +18,16 @@ class UserDaoTest {
     @Autowired
     ApplicationContext context;
 
-    @DisplayName("Add")
+    @DisplayName("Add and Select")
     @Test
-    void awsUserDaoAdd() throws SQLException, ClassNotFoundException {
+    void awsUserDaoAddAndSelect() throws SQLException, ClassNotFoundException {
         UserDao userDao = context.getBean("awsUserDao", UserDao.class); // 가져올 빈의 이름과 빈이 리턴하는 클래스를 매개변수로 넣어준다.
+        userDao.deleteAll();
+        User user = new User("1", "Seunghwan", "1034");
+        userDao.add(user);
+        User newUser = userDao.select(user.getId());
 
-        userDao.add("21");
-        User user = userDao.select("21");
-
-        assertEquals("Seunghwan", user.getName());
+        assertEquals(user.getName(), newUser.getName());
     }
 
     @DisplayName("Delete")
@@ -35,8 +36,9 @@ class UserDaoTest {
         UserDao userDao = context.getBean("awsUserDao", UserDao.class);
         userDao.deleteAll();
 
+        assertEquals(0, userDao.getCount());
         assertThrows(SQLException.class, () -> {
-            userDao.select("21");
+            userDao.select("1");
         });
     }
 
@@ -44,9 +46,19 @@ class UserDaoTest {
     @Test
     void awsUserDaoGetCount() throws SQLException, ClassNotFoundException {
         UserDao userDao = context.getBean("awsUserDao", UserDao.class);
-        userDao.add("11");
-        userDao.add("21");
+        userDao.deleteAll();
+
+        User user1 = new User("1", "Minsoo", "1230");
+        User user2 = new User("2", "Chanhee", "2013");
+        User user3 = new User("3", "Juhwan", "3302");
+
+        userDao.add(user1);
+        assertEquals(1, userDao.getCount());
+        userDao.add(user2);
         assertEquals(2, userDao.getCount());
+        userDao.add(user3);
+        assertEquals(3, userDao.getCount());
+
     }
 
 }

@@ -9,14 +9,14 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void add(String id) throws SQLException, ClassNotFoundException {
+    public void add(User user) throws SQLException, ClassNotFoundException {
         Connection conn = connectionMaker.makeConnection();
 
         /*DB에 쿼리 입력 후 바인딩*/
         PreparedStatement ps = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
-        ps.setString(1, id);
-        ps.setString(2, "Seunghwan");
-        ps.setString(3, "1234");
+        ps.setString(1, user.getId());
+        ps.setString(2, user.getName());
+        ps.setString(3, user.getPassword());
 
         ps.executeUpdate();
 
