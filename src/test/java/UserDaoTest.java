@@ -28,4 +28,25 @@ class UserDaoTest {
 
         assertEquals("Seunghwan", user.getName());
     }
+
+    @DisplayName("Delete")
+    @Test
+    void awsUserDaoDelete() throws SQLException, ClassNotFoundException {
+        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
+        userDao.deleteAll();
+
+        assertThrows(SQLException.class, () -> {
+            userDao.select("21");
+        });
+    }
+
+    @DisplayName("count")
+    @Test
+    void awsUserDaoGetCount() throws SQLException, ClassNotFoundException {
+        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
+        userDao.add("11");
+        userDao.add("21");
+        assertEquals(2, userDao.getCount());
+    }
+
 }
