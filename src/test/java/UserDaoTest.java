@@ -21,10 +21,15 @@ class UserDaoTest {
     ApplicationContext context;
 
     UserDao userDao;
-
+    User user1;
+    User user2;
+    User user3;
     @BeforeEach
     void setup() {
-        userDao = context.getBean("awsUserDao", UserDao.class); // 가져올 빈의 이름과 빈이 리턴하는 클래스를 매개변수로 넣어준다.
+        this.userDao = context.getBean("awsUserDao", UserDao.class); // 가져올 빈의 이름과 빈이 리턴하는 클래스를 매개변수로 넣어준다.
+        this.user1 = new User("1", "Minsoo", "1230");
+        this.user2 = new User("2", "Chanhee", "2013");
+        this.user3 = new User("3", "Juhwan", "3302");
     }
 
     @DisplayName("Add and Select")
@@ -53,10 +58,6 @@ class UserDaoTest {
     @Test
     void awsUserDaoGetCount() throws SQLException, ClassNotFoundException {
         userDao.deleteAll();
-
-        User user1 = new User("1", "Minsoo", "1230");
-        User user2 = new User("2", "Chanhee", "2013");
-        User user3 = new User("3", "Juhwan", "3302");
 
         userDao.add(user1);
         assertEquals(1, userDao.getCount());
