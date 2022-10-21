@@ -10,17 +10,12 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void add(User user) throws SQLException, ClassNotFoundException {
+    public void updateQuery(Option strategy) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = connectionMaker.makeConnection();
-            /*DB에 쿼리 입력 후 바인딩*/
-            ps = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
-            if (user == null) throw new EmptyResultDataAccessException(1);
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
+            ps = strategy.getOption(conn);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -29,14 +24,43 @@ public class UserDao {
         } finally {
             if (ps != null)
                 try {
-                    ps.close(); // 서버 어플리케이션인 경우에는 반드시 작성 필요
+                    ps.close();
                 } catch (SQLException e) {
                 }
-            if (conn != null) try {
-                conn.close();
-            } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                }
             }
         }
+    }
+
+//    public User executeQuery(Option option) throws SQLException, ClassNotFoundException {
+//        Connection conn = connectionMaker.makeConnection();
+//
+//        /*DB에 쿼리 입력 후 바인딩*/
+//        PreparedStatement ps = conn.prepareStatement("SELECT id, name, password FROM users WHERE id = ?");
+//        ps.setString(1, id);
+//
+//        /*쿼리 실행*/
+//        ResultSet resultSet = ps.executeQuery(); // ctrl + enter
+//        User user = null;
+//        if (resultSet.next()) {
+//            user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("password"));
+//        }
+//
+//        resultSet.close();
+//        ps.close(); // 서버 어플리케이션인 경우에는 반드시 작성 필요
+//        conn.close();
+//
+//        if (user == null) throw new EmptyResultDataAccessException(1);
+//
+//        return user;
+//    }
+
+    public void add(User user) throws SQLException, ClassNotFoundException {
+        updateQuery(new AddOption());
     }
 
     public User select(String id) throws SQLException, ClassNotFoundException {
@@ -63,29 +87,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = connectionMaker.makeConnection();
-            ps = conn.prepareStatement("DELETE FROM users");
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (ps != null)
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        updateQuery(new DeleteOption());
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
@@ -119,4 +121,6 @@ public class UserDao {
             }
         }
     }
+
+
 }
