@@ -60,7 +60,7 @@ public class UserDao {
 //    }
 
     public void add(User user) throws SQLException, ClassNotFoundException {
-        updateQuery(new AddOption());
+        updateQuery(new AddOption(user));
     }
 
     public User select(String id) throws SQLException, ClassNotFoundException {

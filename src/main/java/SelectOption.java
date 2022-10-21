@@ -5,18 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SelectOption implements Option {
+    private String id;
+    public SelectOption(String id) {
+        this.id = id;
+    }
+
     @Override
     public PreparedStatement getOption(Connection conn) throws SQLException {
-        throw new RuntimeException();
-    }
-
-    @Override
-    public PreparedStatement getOption(Connection conn, User user) throws SQLException {
-        throw new RuntimeException();
-    }
-
-    @Override
-    public PreparedStatement getOption(Connection conn, String id) throws SQLException {
         PreparedStatement ps = null;
 
         ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");

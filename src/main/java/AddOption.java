@@ -4,14 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AddOption implements Option{
-    @Override
-    public PreparedStatement getOption(Connection conn) throws SQLException {
-        throw new RuntimeException();
+public class AddOption implements Option {
+    private User user;
+
+    public AddOption(User user) {
+        this.user = user;
     }
 
     @Override
-    public PreparedStatement getOption(Connection conn, User user) throws SQLException {
+    public PreparedStatement getOption(Connection conn) throws SQLException {
         PreparedStatement ps = null;
         ps = conn.prepareStatement("INSERT INTO users (id, name, password) VALUES (?, ?, ?)");
 
@@ -22,10 +23,5 @@ public class AddOption implements Option{
         ps.executeUpdate();
 
         return ps;
-    }
-
-    @Override
-    public PreparedStatement getOption(Connection conn, String id) throws SQLException {
-        throw new RuntimeException();
     }
 }

@@ -12,14 +12,4 @@ public class DeleteOption implements Option{
         ps.executeUpdate();
         return ps;
     }
-
-    @Override
-    public PreparedStatement getOption(Connection conn, User user) throws SQLException {
-        throw new RuntimeException();
-    }
-
-    @Override
-    public PreparedStatement getOption(Connection conn, String id) throws SQLException {
-        throw new RuntimeException();
-    }
 }
