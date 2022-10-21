@@ -1,4 +1,5 @@
 import domain.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +9,7 @@ public class AddOption implements Option {
     private User user;
 
     public AddOption(User user) {
+        if (user == null) throw new EmptyResultDataAccessException(1);
         this.user = user;
     }
 

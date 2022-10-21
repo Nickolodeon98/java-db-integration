@@ -16,7 +16,6 @@ public class UserDao {
         try {
             conn = connectionMaker.makeConnection();
             ps = strategy.getOption(conn);
-            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -60,6 +59,7 @@ public class UserDao {
 //    }
 
     public void add(User user) throws SQLException, ClassNotFoundException {
+
         updateQuery(new AddOption(user));
     }
 
