@@ -9,7 +9,7 @@ public class LocalConnectionMaker implements ConnectionMaker{
         /* DB 연결 과정 (mysql 켜는 과정)*/
         Map<String, String> env = System.getenv();
 
-        Class.forName("com.mysql.cj.jdbc.Driver");
+//        Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/likelion-db", env.get("DB_USER"), env.get("DB_PASSWORD"));
 
         return conn;

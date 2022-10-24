@@ -33,4 +33,13 @@ public class JdbcContext {
         }
 
     }
+
+    public void executeSql(String sql) {
+        this.workWithStatementStrategy(new Option() {
+            @Override
+            public PreparedStatement getOption(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        });
+    }
 }

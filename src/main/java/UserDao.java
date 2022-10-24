@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class UserDao {
     private DataSource connectionMaker;
-    private final JdbcContext jdbcContext;
+    private JdbcContext jdbcContext;
 
     public UserDao(DataSource connectionMaker) {
         this.connectionMaker = connectionMaker;
@@ -59,8 +59,10 @@ public class UserDao {
 //        return user;
 //    }
 
+
+
     public void add(User user) {
-        jdbcContext.workWithStatementStrategy(new Option() {
+        this.jdbcContext.workWithStatementStrategy(new Option() {
             @Override
             public PreparedStatement getOption(Connection conn) throws SQLException {
                 PreparedStatement ps = conn.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
@@ -71,16 +73,13 @@ public class UserDao {
                 return ps;
             }
         });
+
     }
 
-    /*콜백으로 수정*/
+    /*콜백으로 수정
+    * 템플릿 콜백 적용*/
     public void deleteAll() {
-        jdbcContext.workWithStatementStrategy(new Option() {
-            @Override
-            public PreparedStatement getOption(Connection conn) throws SQLException {
-                return conn.prepareStatement("DELETE FROM users");
-            }
-        });
+        this.jdbcContext.executeSql("DELETE FROM users");
     }
 
     public User select(String id) throws SQLException, ClassNotFoundException {

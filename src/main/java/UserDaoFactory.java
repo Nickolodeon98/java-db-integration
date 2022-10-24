@@ -25,7 +25,7 @@ public class UserDaoFactory {
         Map<String, String> env = System.getenv();
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 
-        dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+        dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
         dataSource.setUrl(env.get("DB_HOST"));
         dataSource.setUrl(env.get("DB_USER"));
         dataSource.setUrl(env.get("DB_PASSWORD"));
@@ -38,11 +38,12 @@ public class UserDaoFactory {
         Map<String, String> env = System.getenv();
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 
-        dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+        dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
         dataSource.setUrl(env.get("DB_HOST"));
         dataSource.setUrl(env.get("DB_USER"));
         dataSource.setUrl(env.get("DB_PASSWORD"));
 
         return dataSource;
     }
+
 }

@@ -10,7 +10,7 @@ public class AwsConnectionMaker implements ConnectionMaker{
         /* DB 연결 과정 (mysql 켜는 과정)*/
         Map<String, String> env = System.getenv();
 
-        Class.forName("com.mysql.cj.jdbc.Driver");
+//        Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(env.get("DB_HOST"), env.get("DB_USER"), env.get("DB_PASSWORD"));
 
         return conn;

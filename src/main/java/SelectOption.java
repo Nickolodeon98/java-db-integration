@@ -17,8 +17,6 @@ public class SelectOption implements Option {
         ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
         ps.setString(1, id);
 
-
-
         return ps;
     }
 }
