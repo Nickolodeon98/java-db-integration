@@ -1,39 +1,40 @@
 import domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker;
+    private DataSource connectionMaker;
+    private final JdbcContext jdbcContext;
 
-    public UserDao(ConnectionMaker connectionMaker) {
+    public UserDao(DataSource connectionMaker) {
         this.connectionMaker = connectionMaker;
+        this.jdbcContext = new JdbcContext(connectionMaker);
     }
 
-    public void updateQuery(Option strategy) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = connectionMaker.makeConnection();
-            ps = strategy.getOption(conn);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (ps != null)
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
+//    public void updateQuery(Option strategy) {
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        try {
+//            conn = connectionMaker.getConnection();
+//            ps = strategy.getOption(conn);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } finally {
+//            if (ps != null)
+//                try {
+//                    ps.close();
+//                } catch (SQLException e) {
+//                }
+//            if (conn != null) {
+//                try {
+//                    conn.close();
+//                } catch (SQLException e) {
+//                }
+//            }
+//        }
+//    }
 
 //    public User executeQuery(Option option) throws SQLException, ClassNotFoundException {
 //        Connection conn = connectionMaker.makeConnection();
@@ -58,13 +59,32 @@ public class UserDao {
 //        return user;
 //    }
 
-    public void add(User user) throws SQLException, ClassNotFoundException {
+    public void add(User user) {
+        jdbcContext.workWithStatementStrategy(new Option() {
+            @Override
+            public PreparedStatement getOption(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
 
-        updateQuery(new AddOption(user));
+                return ps;
+            }
+        });
+    }
+
+    /*콜백으로 수정*/
+    public void deleteAll() {
+        jdbcContext.workWithStatementStrategy(new Option() {
+            @Override
+            public PreparedStatement getOption(Connection conn) throws SQLException {
+                return conn.prepareStatement("DELETE FROM users");
+            }
+        });
     }
 
     public User select(String id) throws SQLException, ClassNotFoundException {
-        Connection conn = connectionMaker.makeConnection();
+        Connection conn = connectionMaker.getConnection();
 
         /*DB에 쿼리 입력 후 바인딩*/
         PreparedStatement ps = conn.prepareStatement("SELECT id, name, password FROM users WHERE id = ?");
@@ -86,24 +106,18 @@ public class UserDao {
         return user;
     }
 
-    public void deleteAll() throws SQLException, ClassNotFoundException {
-        updateQuery(new DeleteOption());
-    }
-
     public int getCount() throws SQLException, ClassNotFoundException {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            conn = connectionMaker.makeConnection();
+            conn = connectionMaker.getConnection();
             ps = conn.prepareStatement("SELECT count(*) FROM users");
             rs = ps.executeQuery();
             rs.next();
             int count = rs.getInt("count(*)");
             return count;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
             if (rs != null) try {
@@ -121,6 +135,4 @@ public class UserDao {
             }
         }
     }
-
-
 }
